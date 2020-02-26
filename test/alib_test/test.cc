@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2020 Aaron 
+// Copyright (C) 2020 Aaron
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,11 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <iostream>
+#include "./util.h"
 #include "gtest/gtest.h"
 
 int main(int argc, char **argv) {
+  InitLogger(argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

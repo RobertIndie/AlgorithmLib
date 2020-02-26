@@ -30,6 +30,10 @@ build_test:
 
 run_test:	
 	cd test && make run_test
+
+ct: # debug_clean and test
+	make debug_clean
+	make test
 	
 debug_clean:
 	-rm -rf $(BUILD)

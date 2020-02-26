@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2019 Linkworld Open Team
+// Copyright (C) 2020 Aaron
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,20 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https: //www.gnu.org/licenses/>.
 
-#include <fstream>
-#include <iostream>
-#include "./union_find.h"
-#include "gtest/gtest.h"
+#ifndef UTIL_H_
+#define UTIL_H_
 
-TEST(UnionFind, SocialNetwork) {
-  std::ifstream logfile("./social_network/log.txt");
-  alib::UnionFind uf(10);
-  int count = 0;
-  int ts, p, q;
-  while (logfile >> ts >> p >> q) {
-    uf.Union(p, q);
-    if (uf.IsAllConnected()) break;
-  }
-  EXPECT_EQ(ts, 9);
-  logfile.close();
+#include "glog/logging.h"
+
+inline void InitLogger(char *argv[]) {
+  FLAGS_logtostderr = 1;  // log to console
+  google::InitGoogleLogging(argv[0]);
 }
+
+#define LOG_VALUE(value) #value << "=" << value << " "
+#define LOG_NV(name, value) name << "=" << value << " "
+
+#endif  // UTIL_H_
