@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2020 Aaron 
+// Copyright (C) 2020 Aaron
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https: //www.gnu.org/licenses/>.
 
-#ifndef ALIB
-#define ALIB
+#ifndef ALIB_H_
+#define ALIB_H_
 
 extern int GetOne();
 
-#endif   // ALIB
+#endif   // ALIB_H_
