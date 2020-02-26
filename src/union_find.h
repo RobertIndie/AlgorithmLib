@@ -18,17 +18,25 @@
 #define UNION_FIND_H_
 
 #include <memory>
+#include <stdexcept>
 
 namespace alib {
 
+template <bool FuncAllConnected = false>
 class UnionFind {
  public:
-  explicit UnionFind(uint64_t count) {
+  explicit UnionFind(uint64_t count) : count(count) {
     a = std::make_unique<InternalType[]>(count);
-    weight_size = std::make_unique<InternalType[]>(count);
+    weight_size = std::make_unique<uint64_t[]>(count);
+    if constexpr (FuncAllConnected) {
+      all_connect_check = std::make_unique<int8_t[]>(count - 1);
+    }
     for (uint64_t i = 0; i < count; i++) {
       a[i] = i;
       weight_size[i] = 1;
+      if constexpr (FuncAllConnected) {
+        all_connect_check[i] = 0;
+      }
     }
   }
   void Union(uint64_t p, uint64_t q) {
@@ -42,16 +50,52 @@ class UnionFind {
       a[j] = i;
       weight_size[i] += weight_size[j];
     }
+    if constexpr (FuncAllConnected) {
+#define CHECK_ALL_CONNECT(node)                                              \
+  {                                                                          \
+    if (node != 0 && all_connect_check[node] != 1 && IsConnected(0, node)) { \
+      all_connect_count++;                                                   \
+      all_connect_check[node] = 1;                                           \
+    }                                                                        \
+  }
+      CHECK_ALL_CONNECT(p);
+      CHECK_ALL_CONNECT(q);
+    }
   }
   bool IsConnected(uint64_t p, uint64_t q) { return GetRoot(p) == GetRoot(q); }
+  bool IsAllConnected() {
+    if constexpr (FuncAllConnected) {
+      return count == all_connect_count;
+    }
+    throw;
+  }
 
  private:
   typedef uint64_t InternalType;
+  uint64_t count;
   std::shared_ptr<InternalType[]> a;
-  std::shared_ptr<InternalType[]> weight_size;
+  std::shared_ptr<uint64_t[]> weight_size;
+  // FuncAllConnected
+  std::shared_ptr<int8_t[]> all_connect_check;  // index left shift 1
+  uint64_t all_connect_count = 0;
+  void UpdateAllConnect(uint64_t p) {
+    if (p != 0 && all_connect_check[p] != 1 && IsConnected(0, p)) {
+      all_connect_count++;
+      all_connect_check[p] = 1;
+    }
+  }
   InternalType GetRoot(InternalType i) {
     while (i != a[i]) {
       a[i] = a[a[i]];
+      if (i == 0) {
+        for (int j = 0; j < count; j++) {
+          if (a[j] == a[0] && all_connect_check[j] != 1) {
+            all_connect_check[j] = 1;
+            all_connect_count++;
+          }
+        }
+      }
+      UpdateAllConnect(i);
       i = a[i];
     }
     return i;

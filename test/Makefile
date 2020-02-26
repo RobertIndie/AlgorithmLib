@@ -6,6 +6,8 @@ TEST_BUILD_PATH := \
 
 .PHONY: build_test run_test
 
+TEST_DATA := ../build/data
+
 build_test:
 	#make build_proto
 	@for mod in $(TEST_BUILD_PATH); do\
