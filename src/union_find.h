@@ -27,9 +27,11 @@ class UnionFind {
  public:
   explicit UnionFind(uint64_t count) : count(count) {
     a = std::make_unique<InternalType[]>(count);
+    max = std::make_unique<InternalType[]>(count);
     weight_size = std::make_unique<uint64_t[]>(count);
     for (uint64_t i = 0; i < count; i++) {
       a[i] = i;
+      max[i] = i;
       weight_size[i] = 1;
     }
   }
@@ -39,26 +41,37 @@ class UnionFind {
     if (i == j) return;  // already union
     if (weight_size[i] < weight_size[j]) {
       a[i] = j;
+      UpdateMax(j, i);
       weight_size[j] += weight_size[i];
       if (weight_size[j] == count) is_all_connected = true;
     } else {
       a[j] = i;
+      UpdateMax(i, j);
       weight_size[i] += weight_size[j];
       if (weight_size[i] == count) is_all_connected = true;
     }
   }
   bool IsConnected(uint64_t p, uint64_t q) { return GetRoot(p) == GetRoot(q); }
   bool IsAllConnected() { return is_all_connected; }
+  uint64_t Find(uint64_t n) { return max[GetRoot(n)]; }
 
  private:
   typedef uint64_t InternalType;
   uint64_t count;
   bool is_all_connected = false;
   std::shared_ptr<InternalType[]> a;
+  std::shared_ptr<InternalType[]> max;
   std::shared_ptr<uint64_t[]> weight_size;
+  // when change q's root to p, update max
+  void UpdateMax(uint64_t p, uint64_t q) {
+    if (q > p) {
+      max[p] = max[q];
+    }
+  }
   InternalType GetRoot(InternalType i) {
     while (i != a[i]) {
       a[i] = a[a[i]];
+      UpdateMax(a[i], i);
       i = a[i];
     }
     return i;

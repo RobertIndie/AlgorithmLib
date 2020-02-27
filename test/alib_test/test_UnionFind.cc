@@ -31,3 +31,11 @@ TEST(UnionFind, SocialNetwork) {
   EXPECT_EQ(ts, 9);
   logfile.close();
 }
+
+TEST(UnionFind, Max) {
+  alib::UnionFind uf(10);
+  EXPECT_EQ(uf.Find(0), 0);
+  uf.Union(0, 1);
+  uf.Union(2, 1);
+  EXPECT_EQ(uf.Find(0), 2);
+}
